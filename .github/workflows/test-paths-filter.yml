@@ -39,7 +39,7 @@ jobs:
           echo "✅ 源码文件是否变更: ${{ steps.filter.outputs.source }}"
           echo "✅ 文档文件是否变更: ${{ steps.filter.outputs.docs }}"
           echo "✅ 配置文件是否变更: ${{ steps.filter.outputs.config }}"
-          echo "✅ 所有变更文件列表: ${{ steps.filter.outputs.all }}"
+          echo "✅ 所有变更文件列表: ${{ steps.filter.outputs.files }}"
           echo "✅ 变更文件数量: ${{ steps.filter.outputs.count }}"
 
       # 可选：根据过滤结果执行不同逻辑
