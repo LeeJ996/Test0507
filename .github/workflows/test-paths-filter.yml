@@ -20,7 +20,7 @@ jobs:
         id: filter
         uses: LeeJ996/paths-filter@master
         with:
-          output: 'csv'  # 🔥 这一行是关键！不加不输出文件列表
+          output: 'json'  # 🔥 这一行是关键！不加不输出文件列表
           filters: |
             source:
               - 'src/**'
