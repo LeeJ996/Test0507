@@ -1,6 +1,5 @@
 name: Test Paths Filter
 
-# 触发条件：push / PR 到 main 分支都会运行
 on:
   push:
     branches: [ main ]
@@ -11,29 +10,26 @@ jobs:
   test-paths-filter:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 代码
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # 必须加！用于对比文件变更
 
-      # 核心：使用 paths-filter 过滤变更文件
+      # 核心：你的 fork 版本必须加 output: csv
       - name: Filter changed files
         id: filter
         uses: LeeJ996/paths-filter@master
         with:
-          # 定义你要匹配的文件规则（可自由修改）
+          output: 'csv'  # 🔥 这一行是关键！不加不输出文件列表
           filters: |
             source:
               - 'src/**'
-              - '*.js'
-              - '*.ts'
             docs:
-              - 'docs/**'
               - '*.md'
             config:
               - '.github/**'
-              - '*.yml'
-              - '*.yaml'
 
-      # 输出过滤结果（验证是否生效）
+      # 打印结果
       - name: Show filter results
         run: |
           echo "✅ 源码文件是否变更: ${{ steps.filter.outputs.source }}"
@@ -41,8 +37,3 @@ jobs:
           echo "✅ 配置文件是否变更: ${{ steps.filter.outputs.config }}"
           echo "✅ 所有变更文件列表: ${{ steps.filter.outputs.files }}"
           echo "✅ 变更文件数量: ${{ steps.filter.outputs.count }}"
-
-      # 可选：根据过滤结果执行不同逻辑
-      - name: Run if source code changed
-        if: ${{ steps.filter.outputs.source == 'true' }}
-        run: echo "🚀 源码发生变更，执行构建/测试..."
