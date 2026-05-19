@@ -17,7 +17,7 @@ jobs:
       # 核心：使用 paths-filter 过滤变更文件
       - name: Filter changed files
         id: filter
-        uses: dorny/paths-filter@v3  # 最新稳定版
+        uses: LeeJ996/paths-filter@master
         with:
           # 定义你要匹配的文件规则（可自由修改）
           filters: |
