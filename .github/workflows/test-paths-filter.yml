@@ -1,4 +1,4 @@
-name: Test Paths Filter
+name: Test Paths Filter (Official)
 
 on:
   push:
@@ -7,20 +7,19 @@ on:
     branches: [ main ]
 
 jobs:
-  test-paths-filter:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # 必须加！用于对比文件变更
+          fetch-depth: 0  # 必须，获取完整提交历史
 
-      # 核心：你的 fork 版本必须加 output: csv
+      # 🔥 官方原版，100% 能打印文件列表
       - name: Filter changed files
         id: filter
-        uses: LeeJ996/paths-filter@master
+        uses: dorny/paths-filter@v3
         with:
-          output: 'json'  # 🔥 这一行是关键！不加不输出文件列表
+          list-files: csv  # 输出文件列表（关键）
           filters: |
             source:
               - 'src/**'
@@ -29,11 +28,12 @@ jobs:
             config:
               - '.github/**'
 
-      # 打印结果
-      - name: Show filter results
+      # ✅ 这里一定能输出！
+      - name: Show results
         run: |
-          echo "✅ 源码文件是否变更: ${{ steps.filter.outputs.source }}"
-          echo "✅ 文档文件是否变更: ${{ steps.filter.outputs.docs }}"
-          echo "✅ 配置文件是否变更: ${{ steps.filter.outputs.config }}"
-          echo "✅ 所有变更文件列表: ${{ steps.filter.outputs.files }}"
-          echo "✅ 变更文件数量: ${{ steps.filter.outputs.count }}"
+          echo "源码变更: ${{ steps.filter.outputs.source }}"
+          echo "文档变更: ${{ steps.filter.outputs.docs }}"
+          echo "配置变更: ${{ steps.filter.outputs.config }}"
+          echo "变更文件列表: ${{ steps.filter.outputs.source_files }}"
+          echo "所有变更文件: ${{ steps.filter.outputs.all_files }}"
+          echo "变更数量: ${{ steps.filter.outputs.all_count }}"
