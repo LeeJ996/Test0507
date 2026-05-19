@@ -1,0 +1,48 @@
+name: Test Paths Filter
+
+# 触发条件：push / PR 到 main 分支都会运行
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-paths-filter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      # 核心：使用 paths-filter 过滤变更文件
+      - name: Filter changed files
+        id: filter
+        uses: dorny/paths-filter@v3  # 最新稳定版
+        with:
+          # 定义你要匹配的文件规则（可自由修改）
+          filters: |
+            source:
+              - 'src/**'
+              - '*.js'
+              - '*.ts'
+            docs:
+              - 'docs/**'
+              - '*.md'
+            config:
+              - '.github/**'
+              - '*.yml'
+              - '*.yaml'
+
+      # 输出过滤结果（验证是否生效）
+      - name: Show filter results
+        run: |
+          echo "✅ 源码文件是否变更: ${{ steps.filter.outputs.source }}"
+          echo "✅ 文档文件是否变更: ${{ steps.filter.outputs.docs }}"
+          echo "✅ 配置文件是否变更: ${{ steps.filter.outputs.config }}"
+          echo "✅ 所有变更文件列表: ${{ steps.filter.outputs.all }}"
+          echo "✅ 变更文件数量: ${{ steps.filter.outputs.count }}"
+
+      # 可选：根据过滤结果执行不同逻辑
+      - name: Run if source code changed
+        if: ${{ steps.filter.outputs.source == 'true' }}
+        run: echo "🚀 源码发生变更，执行构建/测试..."
